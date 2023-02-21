@@ -1,0 +1,25 @@
+{% extends "screener/base.html" %}
+{% load static %}
+
+{% block content %} 
+
+    <div class="min-vw-100 min-vh-100 d-flex justify-content-center align-items-center flex-column ">
+        
+        <h1 class="fs-6"> Look for a company info through it's ticker </h1>
+        
+        <div class="container-fluid my-4 mx-5 d-flex flex-column flex-sm-row justify-content-around">
+            <form class="d-flex" action="{% url 'company' %}" method="GET">
+            <input class="form-control me-2" type="text" placeholder="Ticker" aria-label="Ticker" name="search_query">
+            <input class="form-control me-2" type="date" id="start_date" placeholder="Start date" aria-label="Start date" name="start_date">
+            <input class="form-control me-2" type="date" id="end_date" placeholder="End date" aria-label="End date" name="end_date">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+        </div>
+
+        <h3> NOT FINANCIAL ADVICE </h3>
+    </div>
+    <script >
+        $('#start_date').val(new Date('2022').toJSON().slice(0,10));    
+        $('#end_date').val(new Date().toJSON().slice(0,10));
+    </script>
+{% endblock %}
