@@ -1,4 +1,11 @@
 from django.db import models
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+
+path_balancesheet = FileSystemStorage('/balancesheet')
+path_income_statement = FileSystemStorage('/income_statement')
+path_cash_flow = FileSystemStorage('/cash_flow')
+path_history = FileSystemStorage('/history')
 
 # Create your models here.
 class Company(models.Model):
@@ -19,10 +26,10 @@ class Company(models.Model):
     summary = models.TextField(blank=True, null=True)
     employees = models.IntegerField(blank=True, null=True)
 
-    balancesheet = models.FileField()
-    income_statement = models.FileField()
-    cash_flow = models.FileField()
-    
+    balancesheet = models.FileField(upload_to = path_balancesheet, blank=True, null=True)
+    income_statement = models.FileField(upload_to = path_income_statement, blank=True, null=True)
+    cash_flow = models.FileField(upload_to = path_cash_flow, blank=True, null=True)
+    history = models.FileField(upload_to=path_history, blank=True, null=True)
 
     class Meta:
         verbose_name_plural="Companies"
