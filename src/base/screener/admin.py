@@ -8,7 +8,7 @@ class CompanyAdmin(admin.ModelAdmin):
         'name',
         'sector',
         'industry',
-
+        'country',
     )
 
     list_filter = (

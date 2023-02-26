@@ -14,16 +14,17 @@ def downloader(ticker, info, balancesheet, income_statement, cash_flow, history)
             informations['ticker'] = ticker
             informations['name'] = ticker_object.quote_type[ticker]['longName']
             profile = ticker_object.asset_profile[ticker]
-            informations['sector'] = profile['sector']
-            informations['industry'] = profile['industry']
-            informations['phone'] = profile['phone']
-            informations['website'] = profile['website']
-            informations['country'] = profile['country']
-            informations['state'] = profile['state']
-            informations['city'] = profile['city']
-            informations['address'] = profile['address1']
-            informations['summary'] = profile['longBusinessSummary']
-            informations['employees'] = profile['fullTimeEmployees']
+
+            informations['sector'] = profile.get('sector')
+            informations['industry'] = profile.get('industry')
+            informations['phone'] = profile.get('phone')
+            informations['website'] = profile.get('website')
+            informations['country'] = profile.get('country')
+            informations['state'] = profile.get('state')
+            informations['city'] = profile.get('city')
+            informations['address'] = profile.get('address1')
+            informations['summary'] = profile.get('longBusinessSummary')
+            informations['employees'] = profile.get('fullTimeEmployees')
         
         if balancesheet:
             ticker_object.balance_sheet().T.to_csv(ARCHIVE_PATH + 'balancesheet/' + ticker + '.csv')

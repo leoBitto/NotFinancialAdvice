@@ -14,29 +14,28 @@ def index(request):
 
 
 def company(request):
-    
-    ticker = request.GET['search_query'].upper()
-    #start_date = dt.strptime(request.GET['start_date'], '%Y-%m-%d').replace(tzinfo=timezone.utc)
-    #end_date = dt.strptime(request.GET['end_date'], '%Y-%m-%d').replace(tzinfo=timezone.utc)
+    try:
+        ticker = request.GET['search_query'].upper()
+        #start_date = dt.strptime(request.GET['start_date'], '%Y-%m-%d').replace(tzinfo=timezone.utc)
+        #end_date = dt.strptime(request.GET['end_date'], '%Y-%m-%d').replace(tzinfo=timezone.utc)
 
-    company = Company.objects.filter(ticker = ticker)
+        company = Company.objects.filter(ticker = ticker)
 
-    if company:
-        #update company objects if object is present in db
-        update_object(ticker)
-        
-    else:
-        #create company objects
-        try:
+        if company:
+            #update company objects if object is present in db
+            update_object(ticker)
+            
+        else:
+            #create company objects
             create_object(ticker)
 
-        ## HANDLE ERRORS
-        except Exception as e:
-            context = { 
-                'req': request.GET['search_query'],
-                'error': f"{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}",
-            }
-            return render(request, 'screener/404.html', context)
+    ## HANDLE ERRORS
+    except Exception as e:
+        context = { 
+            'req': request.GET['search_query'],
+            'error': f"{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}",
+        }
+        return render(request, 'screener/404.html', context)
 
         
     # query db and create context
