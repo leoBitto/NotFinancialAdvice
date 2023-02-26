@@ -16,14 +16,15 @@ def index(request):
 def company(request):
     
     ticker = request.GET['search_query'].upper()
-    start_date = dt.strptime(request.GET['start_date'], '%Y-%m-%d').replace(tzinfo=timezone.utc)
-    end_date = dt.strptime(request.GET['end_date'], '%Y-%m-%d').replace(tzinfo=timezone.utc)
+    #start_date = dt.strptime(request.GET['start_date'], '%Y-%m-%d').replace(tzinfo=timezone.utc)
+    #end_date = dt.strptime(request.GET['end_date'], '%Y-%m-%d').replace(tzinfo=timezone.utc)
 
     company = Company.objects.filter(ticker = ticker)
 
     if company:
-        #update company objects
-        company = Company.objects.filter(ticker = ticker)[0]
+        #update company objects if object is present in db
+        update_object(ticker)
+        
     else:
         #create company objects
         try:
@@ -37,30 +38,30 @@ def company(request):
             }
             return render(request, 'screener/404.html', context)
 
-        else:
-            # query db and create context
-            company = Company.objects.filter(ticker = ticker)[0]
-            
-            context={
+        
+    # query db and create context
+    company = Company.objects.filter(ticker = ticker)[0]
+    
+    context={
 
-                'ticker':company.ticker,
-                'name':company.name,
-                'sector':company.sector,
-                'industry':company.industry,
-                'phone':company.phone,
-                'website':company.website,
-                'country':company.country,
-                'state':company.state,
-                'city':company.city,
-                'address':company.address,
-                'summary':company.summary,
-                'employees':company.employees,
-                'balancesheet':company.balancesheet,
-                'income_statement':company.income_statement,
-                'cash_flow':company.cash_flow,
-                'history':company.history,
+        'ticker':company.ticker,
+        'name':company.name,
+        'sector':company.sector,
+        'industry':company.industry,
+        'phone':company.phone,
+        'website':company.website,
+        'country':company.country,
+        'state':company.state,
+        'city':company.city,
+        'address':company.address,
+        'summary':company.summary,
+        'employees':company.employees,
+        'balancesheet':company.balancesheet,
+        'income_statement':company.income_statement,
+        'cash_flow':company.cash_flow,
+        'history':company.history,
 
-            }
+    }
 
         
     return render(request, 'screener/company.html', context)

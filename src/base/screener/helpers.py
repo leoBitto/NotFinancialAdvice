@@ -2,6 +2,7 @@ import yahooquery as yq
 from .models import *
 import pandas as pd
 from django.conf import settings
+import datetime as dt
 
 ARCHIVE_PATH = str(settings.BASE_DIR) + "/archive/"
 
@@ -85,4 +86,37 @@ def create_object(ticker):
         print(f"{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}")
         raise e
 
+def update_object(ticker):
+    try:
+        company = Company.objects.filter(ticker=ticker)[0]
+
+        # update the csv files again 
+        downloader(ticker, False, True, True, True, False)
         
+
+        history = pd.read_csv(ARCHIVE_PATH + "history/" + str(company.history), index_col = 'date', parse_dates=True)
+        latest_date_in_history = history.index.max().to_pydatetime()
+        today_date = dt.datetime.today()
+        # check if history is updated as current date
+        # if the last date in history file is before the current day and is not the weekend
+        #       convert to date() all numbers
+        if latest_date_in_history.date() < today_date.date() and not (today_date.weekday()== 6 or today_date.weekday() == 5) :
+            print("upgrading history")
+            # in ticker_info there is the latest updated history csv
+            new_df = yq.Ticker(ticker).history(start = latest_date_in_history, end=today_date)
+            # concatenate the df
+            new_df = pd.concat([history, new_df])
+            # eliminate duplicated rows
+            new_df = new_df[~new_df.index.duplicated()]
+            # save new_df 
+            new_df.to_csv(ARCHIVE_PATH + 'history/' + ticker + '.csv')
+        else:
+            print("already upgraded history")
+    
+    except Exception as e:
+            
+        print(f"{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}")
+        raise e
+
+    else:
+        print("updated object")
