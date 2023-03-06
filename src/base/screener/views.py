@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from datetime import datetime as dt
-from datetime import timezone
 from screener.models import *
 from .helpers import *
+from .plotter import *
+from .index_calculator import *
 
 # Create your views here.
 def index(request):
@@ -40,7 +41,20 @@ def company(request):
         
     # query db and create context
     company = Company.objects.filter(ticker = ticker)[0]
+
+    # CALCULATE INDICES
+    # get income_statement and balancesheet
+    income_statement = pd.read_csv(ARCHIVE_PATH + "income_statement/" + str(company.income_statement), index_col=0)
+    balancesheet = pd.read_csv(ARCHIVE_PATH + "balancesheet/" + str(company.balancesheet), index_col=0)
     
+    indices = calculate_indices(financials = income_statement, balancesheet = balancesheet)
+    mean_indices = industry_mean(company.industry)
+
+    # CREATE PLOTS
+    # get history
+
+
+
     context={
 
         'ticker':company.ticker,
@@ -55,11 +69,16 @@ def company(request):
         'address':company.address,
         'summary':company.summary,
         'employees':company.employees,
+
         'balancesheet':company.balancesheet,
         'income_statement':company.income_statement,
         'cash_flow':company.cash_flow,
+
         'history':company.history,
 
+        'indices':indices,
+        'mean_indices':mean_indices,
+        
     }
 
         

@@ -10,57 +10,90 @@
     </div>
     <div class="d-flex flex-row m-auto p-3 justify-content-around">
         <div class=" col-5 fs-5">{{summary}}</div>
-        <ul class=" col-5 m-auto list-group">
-            <li class="list-group-item active"> General Info </li>
-            <li class="list-group-item"><span>sector: </span><span>{{sector}}</span></li>
-            <li class="list-group-item"><span>industry: </span><span>{{industry}}</span></li>
-            <li class="list-group-item"><span>phone: </span><span>{{phone}}</span></li>
-            <li class="list-group-item"><span>website: </span><span><a href="{{website}}">{{website}}</a></span></li>
-            <li class="list-group-item"><span>country: </span><span>{{country}}</span></li>
-            <li class="list-group-item"><span>state: </span><span>{{state}}</span></li>
-            <li class="list-group-item"><span>city: </span><span>{{city}}</span></li>
-            <li class="list-group-item"><span>address: </span><span>{{address}}</span></li>
-            <li class="list-group-item"><span>employees: </span><span>{{employees}}</span></li>
-
-            <li class="list-group-item active"> Indices </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span>Current Ratio (CR): </span><span></span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span>Quick Ratio (QR): </span><span></span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span>fixed asset coverage: </span><span></span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span>Indebtment Ratio (RI): </span><span></span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span>interest expense coverage: </span><span></span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span>Return On Debt (ROD): </span><span></span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span>Return On Equity (ROE): </span><span></span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span>Return On Asset (ROA): </span><span></span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span>Return On Sales (ROS): </span><span></span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span>Return On Investment (ROI): </span><span></span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span>Return On Turnover (ROT): </span><span></span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span>active circulating rotation: </span><span></span>
-            </li>
-        </ul>
-
+        <div class="col-5">
+            <ul class=" list-group mb-3">
+                <li class="list-group-item active"> General Info </li>
+                <li class="list-group-item"><span>sector: </span><span>{{sector}}</span></li>
+                <li class="list-group-item"><span>industry: </span><span>{{industry}}</span></li>
+                <li class="list-group-item"><span>phone: </span><span>{{phone}}</span></li>
+                <li class="list-group-item"><span>website: </span><span><a href="{{website}}">{{website}}</a></span></li>
+                <li class="list-group-item"><span>country: </span><span>{{country}}</span></li>
+                <li class="list-group-item"><span>state: </span><span>{{state}}</span></li>
+                <li class="list-group-item"><span>city: </span><span>{{city}}</span></li>
+                <li class="list-group-item"><span>address: </span><span>{{address}}</span></li>
+                <li class="list-group-item"><span>employees: </span><span>{{employees}}</span></li>
+            </ul>
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th colspan="2">Indices </th>
+                        <th> Industry Mean </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">Current Ratio (CR) [+, 1.5 - 2.5]: </th>
+                        <td>{{indices.CR}}</td>
+                        <td>{{mean_indices.CR}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Quick Ratio (QR) [+, 1 - 2]: </th>
+                        <td>{{indices.QR}}</td>
+                        <td>{{mean_indices.QR}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">fixed asset coverage  [+, >0.7]: </th>
+                        <td>{{indices.fixed_asset_coverage}}</td>
+                        <td>{{mean_indices.fixed_asset_coverage}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Indebtment Ratio (RI) [-, < 3]: </th>
+                        <td>{{indices.RI}}</td>
+                        <td>{{mean_indices.RI}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">interest expense coverage [+]: </th>
+                        <td>{{indices.interest_expense_coverage}}</td>
+                        <td>{{mean_indices.interest_expense_coverage}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Return On Debt (ROD) [-]: </th>
+                        <td>{{indices.ROD}}</td>
+                        <td>{{mean_indices.ROD}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Return On Equity (ROE) [+]: </th>
+                        <td>{{indices.ROE}}</td>
+                        <td>{{mean_indices.ROE}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Return On Asset (ROA) [+]: </th>
+                        <td>{{indices.ROA}}</td>
+                        <td>{{mean_indices.ROA}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Return On Sales (ROS) [+]: </th>
+                        <td>{{indices.ROS}}</td>
+                        <td>{{mean_indices.ROS}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Return On Investment (ROI) [+]: </th>
+                        <td>{{indices.ROI}}</td>
+                        <td>{{mean_indices.ROI}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Return On Turnover (ROT) [+]: </th>
+                        <td>{{indices.ROT}}</td>
+                        <td>{{mean_indices.ROT}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">active circulating rotation [+]: </th>
+                        <td>{{indices.active_circulating_rotation}}</td>
+                        <td>{{mean_indices.active_circulating_rotation}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
 </div>

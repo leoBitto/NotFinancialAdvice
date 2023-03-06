@@ -38,8 +38,8 @@ def downloader(ticker, info, balancesheet, income_statement, cash_flow, history)
             ticker_object.cash_flow().T.to_csv(ARCHIVE_PATH + 'cash_flow/' + ticker + '.csv')
             informations['cash_flow'] = ticker + '.csv'
 
-        if history:
-            ticker_object.history(period='max').to_csv(ARCHIVE_PATH + 'history/' + ticker + '.csv')
+        if history:# reset index because its multilayer
+            ticker_object.history(period='max').reset_index().to_csv(ARCHIVE_PATH + 'history/' + ticker + '.csv')
             informations['history'] = ticker + '.csv'
 
 
@@ -51,7 +51,6 @@ def downloader(ticker, info, balancesheet, income_statement, cash_flow, history)
     else:
 
         return informations
-
 
 def create_object(ticker):
 
@@ -88,27 +87,30 @@ def create_object(ticker):
         raise e
 
 def update_object(ticker):
+
     try:
         company = Company.objects.filter(ticker=ticker)[0]
 
         # update the csv files again 
         downloader(ticker, False, True, True, True, False)
-        
 
-        history = pd.read_csv(ARCHIVE_PATH + "history/" + str(company.history), index_col = 'date', parse_dates=True)
-        latest_date_in_history = history.index.max().to_pydatetime()
+        history = pd.read_csv(ARCHIVE_PATH + "history/" + str(company.history), index_col='date')
+        latest_date_in_history = dt.datetime.strptime(history.index.max()[0:10], "%Y-%m-%d")
         today_date = dt.datetime.today()
         # check if history is updated as current date
         # if the last date in history file is before the current day and is not the weekend
         #       convert to date() all numbers
         if latest_date_in_history.date() < today_date.date() and not (today_date.weekday()== 6 or today_date.weekday() == 5) :
             print("upgrading history")
-            # in ticker_info there is the latest updated history csv
-            new_df = yq.Ticker(ticker).history(start = latest_date_in_history, end=today_date)
+            # in ticker_info there is the latest updated history csv, reset index because its multilayer
+            new_df = yq.Ticker(ticker).history(start = latest_date_in_history, end=today_date).reset_index().set_index('date')
+            
             # concatenate the df
             new_df = pd.concat([history, new_df])
             # eliminate duplicated rows
             new_df = new_df[~new_df.index.duplicated()]
+            #eliminate unnamed columns
+            new_df = new_df.loc[:, ~new_df.columns.str.contains('^Unnamed')]
             # save new_df 
             new_df.to_csv(ARCHIVE_PATH + 'history/' + ticker + '.csv')
         else:
@@ -121,3 +123,14 @@ def update_object(ticker):
 
     else:
         print("updated object")
+
+
+
+
+
+
+
+
+
+
+        
