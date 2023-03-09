@@ -1,5 +1,12 @@
 archive/
 test.csv
 test.ipynb
-db.sqlite3
+
 env_NFA/
+
+*.log
+*.pot
+*.pyc
+__pycache__
+db.sqlite3
+media
