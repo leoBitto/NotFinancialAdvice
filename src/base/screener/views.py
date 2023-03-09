@@ -1,9 +1,11 @@
 from django.shortcuts import render
-from datetime import datetime as dt
+import plotly.io as pi
+import datetime as dt
+from datetime import timezone
 from screener.models import *
-from .helpers import *
-from .plotter import *
-from .index_calculator import *
+from .helpers.db_manager import *
+from .helpers.plotter import *
+from .helpers.index_calculator import *
 
 # Create your views here.
 def index(request):
@@ -17,8 +19,11 @@ def index(request):
 def company(request):
     try:
         ticker = request.GET['search_query'].upper()
-        #start_date = dt.strptime(request.GET['start_date'], '%Y-%m-%d').replace(tzinfo=timezone.utc)
-        #end_date = dt.strptime(request.GET['end_date'], '%Y-%m-%d').replace(tzinfo=timezone.utc)
+        #start_date = dt.datetime.strptime(request.GET['start_date'], '%Y-%m-%d').replace(tzinfo=timezone.utc).date()
+        #end_date = dt.datetime.strptime(request.GET['end_date'], '%Y-%m-%d').replace(tzinfo=timezone.utc).date()
+
+        start_date = request.GET['start_date']
+        end_date = request.GET['end_date']
 
         company = Company.objects.filter(ticker = ticker)
 
@@ -52,8 +57,12 @@ def company(request):
 
     # CREATE PLOTS
     # get history
-
-
+    history = pd.read_csv(ARCHIVE_PATH + "history/" + str(company.history), index_col='date')
+    candle_plot = pi.to_html(
+        plot_candlestick(history.loc[start_date: end_date]), 
+        full_html=False, 
+        default_height="800px"
+        )
 
     context={
 
@@ -74,10 +83,13 @@ def company(request):
         'income_statement':company.income_statement,
         'cash_flow':company.cash_flow,
 
-        'history':company.history,
+        'history':history,
 
         'indices':indices,
         'mean_indices':mean_indices,
+
+        #plots 
+        'candlestick': candle_plot,
         
     }
 

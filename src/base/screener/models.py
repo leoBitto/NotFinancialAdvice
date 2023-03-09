@@ -1,7 +1,9 @@
 from django.db import models
 from django.conf import settings
+import os
 from django.core.files.storage import FileSystemStorage
 
+ARCHIVE_PATH = str(settings.BASE_DIR) + "/archive/"
 path_balancesheet = FileSystemStorage('/balancesheet')
 path_income_statement = FileSystemStorage('/income_statement')
 path_cash_flow = FileSystemStorage('/cash_flow')
@@ -34,6 +36,20 @@ class Company(models.Model):
     class Meta:
         verbose_name_plural="Companies"
         
+
+    def delete(self):
+        # delete the files after checking if they exist
+        if os.path.exists(ARCHIVE_PATH + "balancesheet/" + self.ticker + ".csv"):
+            os.remove(ARCHIVE_PATH + "balancesheet/" + self.ticker + ".csv")
+        if os.path.exists(ARCHIVE_PATH + "cashflow/" + self.ticker + ".csv"):
+            os.remove(ARCHIVE_PATH + "cashflow/" + self.ticker + ".csv")
+        if os.path.exists(ARCHIVE_PATH + "history/" + self.ticker + ".csv"):
+            os.remove(ARCHIVE_PATH + "history/" + self.ticker + ".csv")
+        if os.path.exists(ARCHIVE_PATH + "income_statement/" + self.ticker + ".csv"):
+            os.remove(ARCHIVE_PATH + "income_statement/" + self.ticker + ".csv")
+
+        super(Company, self).delete()
+
 
     def __str__(self):
         return self.name
