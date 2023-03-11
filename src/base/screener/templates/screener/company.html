@@ -99,6 +99,20 @@
 </div>
 
 <section class="plots container m-auto">
+
+        <h1 class="text-center"> Financial Statement </h1>
+        <div class="container w-100 d-flex row-direction">
+            <div class="container w-50">
+                <h2 class="text-center"> Asset & Liabilities </h2>
+                {{ asset_liabilities | safe }}
+            </div>
+            
+            <div class="container w-50">
+                <h2 class="text-center"> Revenue & Income </h2>
+                {{ revenue_income | safe }}
+            </div>
+        </div>
+
         <h1> Candle Plot </h1>
         <div class="container w-100">
             {{ candlestick | safe }}

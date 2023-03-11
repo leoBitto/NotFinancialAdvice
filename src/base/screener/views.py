@@ -20,10 +20,10 @@ def company(request):
     try:
         ticker = request.GET['search_query'].upper()
         #start_date = dt.datetime.strptime(request.GET['start_date'], '%Y-%m-%d').replace(tzinfo=timezone.utc).date()
-        #end_date = dt.datetime.strptime(request.GET['end_date'], '%Y-%m-%d').replace(tzinfo=timezone.utc).date()
+        end_date = dt.datetime.today().date()
 
-        start_date = request.GET['start_date']
-        end_date = request.GET['end_date']
+        #start_date = request.GET['start_date']
+        #end_date = request.GET['end_date']
 
         company = Company.objects.filter(ticker = ticker)
 
@@ -58,10 +58,25 @@ def company(request):
     # CREATE PLOTS
     # get history
     history = pd.read_csv(ARCHIVE_PATH + "history/" + str(company.history), index_col='date')
-    candle_plot = pi.to_html(
+    #convert dates to str
+    start_date = dt.datetime.strftime(end_date-pd.DateOffset(years= 10), '%Y-%m-%d')
+    end_date = dt.datetime.strftime(end_date, '%Y-%m-%d')
+    candle_plot = pi.to_html(    
         plot_candlestick(history.loc[start_date: end_date]), 
         full_html=False, 
         default_height="800px"
+        )
+
+    asset_liabilities = pi.to_html(
+        plot_balancesheet(balancesheet), 
+        full_html=False, 
+        #default_height="800px"
+        )
+
+    revenue_income = pi.to_html(
+        plot_income_statement(income_statement), 
+        full_html=False, 
+        #default_height="800px"
         )
 
     context={
@@ -84,12 +99,15 @@ def company(request):
         'cash_flow':company.cash_flow,
 
         'history':history,
+        
 
         'indices':indices,
         'mean_indices':mean_indices,
 
         #plots 
         'candlestick': candle_plot,
+        'asset_liabilities': asset_liabilities,
+        'revenue_income': revenue_income,
         
     }
 
