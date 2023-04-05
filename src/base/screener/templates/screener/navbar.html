@@ -7,8 +7,8 @@
         <a class="navbar-brand">NOT FINANCIAL ADVICE</a>
         <form class="d-flex" action="{% url 'company' %}" method="GET">
             <input class="form-control me-2" type="text" placeholder="Search ticker" aria-label="Search" name="search_query">
-            <input class="form-control me-2" type="date" id="start_date" placeholder="Start date" aria-label="Start date" name="start_date">
-            <input class="form-control me-2" type="date" id="end_date" placeholder="End date" aria-label="End date" name="end_date">
+            {% comment %} <input class="form-control me-2" type="date" id="start_date" placeholder="Start date" aria-label="Start date" name="start_date">
+            <input class="form-control me-2" type="date" id="end_date" placeholder="End date" aria-label="End date" name="end_date"> {% endcomment %}
             <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
     </div>

@@ -12,9 +12,8 @@ def downloader(ticker, info, balancesheet, income_statement, cash_flow, history)
         informations = {}
         if info:
             informations['ticker'] = ticker
-            informations['name'] = ticker_object.quote_type[ticker]['longName']
+            informations['name'] = ticker_object.quote_type[ticker].get('longName')
             profile = ticker_object.asset_profile[ticker]
-
             informations['sector'] = profile.get('sector')
             informations['industry'] = profile.get('industry')
             informations['phone'] = profile.get('phone')
@@ -43,6 +42,10 @@ def downloader(ticker, info, balancesheet, income_statement, cash_flow, history)
             history_df = ticker_object.history(period='max')
             # reset index, eliminate double indexing
             history_df.reset_index(inplace=True)
+            #convert datetime of the df to date
+            history_df['date'] = pd.to_datetime(history_df["date"]).dt.date
+            #eliminate unnamed columns
+            history_df = history_df.loc[:, ~history_df.columns.str.contains('^Unnamed')]
             # save to csv
             history_df.to_csv(ARCHIVE_PATH + 'history/' + ticker + '.csv')
             informations['history'] = ticker + '.csv'
@@ -99,27 +102,38 @@ def update_object(ticker):
         # update the csv files again 
         downloader(ticker, False, True, True, True, False)
 
+        ## history is downloaded separately, requesting only the needed dates
         history = pd.read_csv(ARCHIVE_PATH + "history/" + str(company.history), index_col='date')
         latest_date_in_history = dt.datetime.strptime(history.index.max()[0:10], "%Y-%m-%d")
-        today_date = dt.datetime.today()
+        today_date = dt.datetime.today() - dt.timedelta(days=1)
         # check if history is updated as current date
         # if the last date in history file is before the current day and is not the weekend
         #       convert to date() all numbers
         if latest_date_in_history.date() < today_date.date() and not (today_date.weekday()== 6 or today_date.weekday() == 5) :
             # in ticker_info there is the latest updated history csv, reset index because its multilayer
-            new_df = yq.Ticker(ticker).history(start = latest_date_in_history, end=today_date).reset_index(inplace=True)
-            if new_df is not None:
-                print("upgrading history...")
-                # set new index 
-                new_df.set_index('date', inplace=True)
-                # concatenate the df
-                new_df = pd.concat([history, new_df])
-                # eliminate duplicated rows
-                new_df = new_df[~new_df.index.duplicated()]
-                #eliminate unnamed columns
-                new_df = new_df.loc[:, ~new_df.columns.str.contains('^Unnamed')]
-                # save new_df 
-                new_df.to_csv(ARCHIVE_PATH + 'history/' + ticker + '.csv')
+            new_df = yq.Ticker(ticker).history(start = latest_date_in_history, end=today_date)
+            
+            #eliminate old double index it acts on the df and returns None
+            new_df.reset_index(inplace=True)
+            print("upgrading history...")
+            
+            #convert datetime of the df to date
+            new_df['date'] = pd.to_datetime(new_df["date"]).dt.date
+            
+            # set new index on df
+            new_df.set_index('date', inplace=True)
+        
+            # concatenate the df
+            new_df = pd.concat([history, new_df])
+         
+            #eliminate unnamed columns
+            new_df = new_df.loc[:, ~new_df.columns.str.contains('^Unnamed')]
+            
+            # eliminate duplicated rows
+            new_df = new_df.drop_duplicates()
+         
+            # save new_df 
+            new_df.to_csv(ARCHIVE_PATH + 'history/' + ticker + '.csv')
         else:
             print("already upgraded history")
     

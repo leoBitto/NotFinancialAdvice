@@ -33,6 +33,9 @@ class Company(models.Model):
     cash_flow = models.FileField(upload_to = path_cash_flow, blank=True, null=True)
     history = models.FileField(upload_to=path_history, blank=True, null=True)
 
+    latest_update = models.DateTimeField(auto_now=True)
+
+
     class Meta:
         verbose_name_plural="Companies"
         

@@ -5,6 +5,7 @@ import pandas as pd
 ARCHIVE_PATH = str(settings.BASE_DIR) + "/archive/"
 
 
+
 def calculate_indices(financials, balancesheet):
     #### TRY TO GET THE PARAMETERS FROM BALANCESHEET OR FINANCIALS OR
     #### SET THE VALUE AS float("NaN") to make the calculus of indices 
@@ -55,22 +56,22 @@ def calculate_indices(financials, balancesheet):
 
     indices = {
         #liquidity indices
-        'CR' : round(current_assets / current_liabilities, 2) if current_liabilities != 0 else 0,
-        'QR' : round((current_assets - inventory) / current_liabilities, 2 ) if current_liabilities != 0 else 0,
+        'CR' : round(current_assets / current_liabilities, 3) if current_liabilities != 0 else 0,
+        'QR' : round((current_assets - inventory) / current_liabilities, 3) if current_liabilities != 0 and inventory != 0 else 0,
 
         # financial solidity indices
-        'fixed_asset_coverage' : round(((total_assets- intangible_assets)-(current_liabilities - short_term_debt))/total_debt, 2) if total_debt != 0 else 0,
-        'RI' : round(total_debt / stockholder_equity, 2) if stockholder_equity != 0 else 0,
-        'interest_expense_coverage' : round(EBIT / interest_expense, 2) if interest_expense != 0 else 0,
-        'ROD' : round(net_income / long_term_debt, 2) if long_term_debt != 0 else 0,
+        'fixed_asset_coverage' : round(((total_assets - intangible_assets)-(current_liabilities - short_term_debt))/total_debt, 3) if total_debt != 0 else 0,
+        'RI' : round(total_debt / stockholder_equity, 3) if stockholder_equity != 0 else 0,
+        'interest_expense_coverage' : round(EBIT / interest_expense, 3) if interest_expense != 0 else 0,
+        'ROD' : round(net_income / long_term_debt, 3) if long_term_debt != 0 else 0,
 
         # redditivity indices
-        'ROE' : round(net_income / stockholder_equity, 2) if stockholder_equity != 0 else 0,
-        'ROA' : round(net_income / total_assets, 2) if total_assets != 0 else 0,
-        'ROS' : round(net_sales / net_income, 2) if net_income != 0 else 0,
-        'ROI' : round(net_income / invested_capital, 2) if invested_capital != 0 else 0,
-        'ROT' : round(invested_capital / interest_expense, 2) if interest_expense != 0 else 0,
-        'active_circulating_rotation' : round(net_income / current_assets, 2) if current_assets != 0 else 0,
+        'ROE' : round(net_income / stockholder_equity, 3) if stockholder_equity != 0 else 0,
+        'ROA' : round(net_income / total_assets, 3) if total_assets != 0 else 0,
+        'ROS' : round(net_sales / net_income, 3) if net_income != 0 else 0,
+        'ROI' : round(net_income / invested_capital, 3) if invested_capital != 0 else 0,
+        'ROT' : round(invested_capital / interest_expense, 3) if interest_expense != 0 else 0,
+        'active_circulating_rotation' : round(net_income / current_assets, 3) if current_assets != 0 else 0,
     }
     return indices
 
@@ -110,22 +111,22 @@ def industry_mean(industry):
         balancesheet = pd.read_csv(ARCHIVE_PATH + "balancesheet/" + str(company.balancesheet), index_col=0)
         indices = calculate_indices(financials=income_statement, balancesheet=balancesheet)
 
-        mean_indices['CR'] = (mean_indices['CR'] + indices['CR'])/2
-        mean_indices['QR'] = (mean_indices['QR'] + indices['QR'])/2
-        mean_indices['fixed_asset_coverage'] = (mean_indices['fixed_asset_coverage'] + indices['fixed_asset_coverage'])/2
-        mean_indices['RI'] = (mean_indices['RI'] + indices['RI'])/2
-        mean_indices['interest_expense_coverage'] = (mean_indices['interest_expense_coverage'] + indices['interest_expense_coverage'])/2
-        mean_indices['ROD'] = (mean_indices['ROD'] + indices['ROD'])/2
-        mean_indices['ROE'] = (mean_indices['ROE'] + indices['ROE'])/2
-        mean_indices['ROA'] = (mean_indices['ROA'] + indices['ROA'])/2
-        mean_indices['ROS'] = (mean_indices['ROS'] + indices['ROS'])/2
-        mean_indices['ROI'] = (mean_indices['ROI'] + indices['ROI'])/2
-        mean_indices['ROT'] = (mean_indices['ROT'] + indices['ROT'])/2
-        mean_indices['active_circulating_rotation'] = (mean_indices['active_circulating_rotation'] + indices['active_circulating_rotation'])/2
+        mean_indices['CR'] = (mean_indices['CR'] + indices['CR'])/2 if indices['CR'] is not float("NaN") else mean_indices['CR']
+        mean_indices['QR'] = (mean_indices['QR'] + indices['QR'])/2 if indices['QR'] is not float("NaN") else mean_indices['QR']
+        mean_indices['fixed_asset_coverage'] = (mean_indices['fixed_asset_coverage'] + indices['fixed_asset_coverage'])/2 if indices['fixed_asset_coverage'] is not float("NaN") else mean_indices['fixed_asset_coverage']
+        mean_indices['RI'] = (mean_indices['RI'] + indices['RI'])/2 if indices['RI'] is not float("NaN") else mean_indices['RI']
+        mean_indices['interest_expense_coverage'] = (mean_indices['interest_expense_coverage'] + indices['interest_expense_coverage'])/2 if indices['interest_expense_coverage'] is not float("NaN") else mean_indices['interest_expense_coverage']
+        mean_indices['ROD'] = (mean_indices['ROD'] + indices['ROD'])/2 if indices['ROD'] is not float("NaN") else mean_indices['ROD']
+        mean_indices['ROE'] = (mean_indices['ROE'] + indices['ROE'])/2 if indices['ROE'] is not float("NaN") else mean_indices['ROE']
+        mean_indices['ROA'] = (mean_indices['ROA'] + indices['ROA'])/2 if indices['ROA'] is not float("NaN") else mean_indices['ROA']
+        mean_indices['ROS'] = (mean_indices['ROS'] + indices['ROS'])/2 if indices['ROS'] is not float("NaN") else mean_indices['ROS']
+        mean_indices['ROI'] = (mean_indices['ROI'] + indices['ROI'])/2 if indices['ROI'] is not float("NaN") else mean_indices['ROI']
+        mean_indices['ROT'] = (mean_indices['ROT'] + indices['ROT'])/2 if indices['ROT'] is not float("NaN") else mean_indices['ROT']
+        mean_indices['active_circulating_rotation'] = (mean_indices['active_circulating_rotation'] + indices['active_circulating_rotation'])/2 if indices['active_circulating_rotation'] is not float("NaN") else mean_indices['active_circulating_rotation']
 
     # round all the numbers
     for key in mean_indices:
-        mean_indices[key] = round(mean_indices[key], 3)
+        mean_indices[key] = round(mean_indices[key], 4)
 
     return mean_indices
 
